@@ -3,16 +3,17 @@ import datetime
 
 
 def get_trending_repositories(top_size):
+    days_count = 7
     today = datetime.date.today()
-    week = datetime.timedelta(days=7)
+    week = datetime.timedelta(days=days_count)
     week_ago = today - week
 
-    params_list = {'q': 'created:>=' + str(week_ago), 'sort': 'stars'}
+    params_list = {'q': 'created:>={0}'.format(week_ago), 'sort': 'stars'}
     url = 'https://api.github.com/search/repositories'
     response = requests.get(url, params=params_list)
     trending_repositories = response.json()
        
-    return trending_repositories['items'][0:top_size]
+    return trending_repositories['items'][:top_size]
 
 
 def get_open_issues(repo_owner, repo_name):
@@ -59,4 +60,3 @@ if __name__ == '__main__':
         if open_issues_amount:
             open_issues = get_open_issues(repo['owner']['login'], repo['name'])
             print_open_issues_data(open_issues)
-    
